@@ -8,7 +8,9 @@ import toastError from './utils/toast';
 import toastWin from './utils/win';
 
 export default function Home() {
-  const [board, setBoard] = useState(levels[0].board);
+  const [board, setBoard] = useState([
+    ...levels[0].board.map((row) => [...row]),
+  ]);
   const [level, setLevel] = useState(0);
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -73,13 +75,18 @@ export default function Home() {
       }
     }
 
+    // count connected color
+    let count = 0;
+    for (let i = 0; i < levels[level].colorCount; i++) {
+      if (arr[i] <= 1) count++;
+    }
+    setConnectedColor(count);
+
     // check if win
     if (!(arr[0] <= 1 && arr[1] <= 1 && arr[2] <= 1)) {
+      // banyak warna yang terhubung harus dari ketiga warna <= 1
       return;
     }
-
-    // restart board back to initial
-    levels[level].board = [...levels[level].restart.map((row) => [...row])];
 
     // next level
     if (level == levels.length - 1) {
@@ -88,7 +95,9 @@ export default function Home() {
     }
 
     setLevel((level + 1) % levels.length);
-    setBoard(levels[(level + 1) % levels.length].board);
+    setBoard([
+      ...levels[(level + 1) % levels.length].board.map((row) => [...row]),
+    ]);
     setLastStep([]);
   };
 
@@ -182,7 +191,9 @@ export default function Home() {
                     <a
                       onClick={() => {
                         setLevel(index);
-                        setBoard(levels[index].board);
+                        setBoard([
+                          ...levels[index].board.map((row) => [...row]),
+                        ]);
                         setIsOpen(false);
                         setLastStep([]);
                       }}
@@ -233,18 +244,15 @@ export default function Home() {
             })}
           </div>
         </div>
-        <div className='flex flex-row'>
-          Mouse is Down:{' '}
-          <h4 className='font-bold text-red-400'>
-            {' '}
-            {isMouseDown == false ? 'No' : 'Yes'}
+        <div className='flex-row'>
+          <h4 className='font-bold'>
+            Connected: {connectedColor} / {levels[level].colorCount}
           </h4>
         </div>
         <div className='flex flex-row'>
-          {/* restart button */}
           <button
             onClick={() => {
-              setBoard([...levels[level].restart.map((row) => [...row])]);
+              setBoard([...levels[level].board.map((row) => [...row])]);
               setLastStep([]);
             }}
             className='px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-100'
