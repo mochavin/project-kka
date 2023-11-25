@@ -4,6 +4,7 @@ const levels = [
   {
     id: 1,
     name: 'Level 1',
+    colorCount: 1,
     board: [
       [0, 0, 0, 1, 0, 1, 2, 1],
       [0, 1, 0, 1, 0, 1, 0, 0],
@@ -20,6 +21,7 @@ const levels = [
   {
     id: 2,
     name: 'Level 2',
+    colorCount: 2,
     board: [
       [3, 1, 0, 0, 0, 0, 0, 1],
       [0, 0, 0, 0, 0, 1, 0, 0],
@@ -36,6 +38,7 @@ const levels = [
   {
     id: 3,
     name: 'Level 3',
+    colorCount: 2,
     board: [
       [0, 0, 0, 0, 0, 1, 0, 0],
       [0, 1, 1, 1, 1, 1, 1, 1],
@@ -52,6 +55,7 @@ const levels = [
   {
     id: 4,
     name: 'Level 4',
+    colorCount: 3,
     board: [
       [2, 0, 0, 0, 0, 1, 0, 0],
       [0, 1, 1, 1, 1, 1, 1, 1],
@@ -68,6 +72,7 @@ const levels = [
   {
     id: 5,
     name: 'Level 5',
+    colorCount: 2,
     board: [
       [0, 0, 0, 0, 0, 3, 0, 0],
       [0, 1, 1, 1, 1, 1, 1, 1],
@@ -84,6 +89,7 @@ const levels = [
   {
     id: 6,
     name: 'Level 6',
+    colorCount: 2,
     board: [
       [0, 0, 0, 0, 0, 3, 0, 0],
       [0, 1, 1, 1, 1, 1, 1, 1],
@@ -100,6 +106,7 @@ const levels = [
   {
     id: 7,
     name: 'Level 7',
+    colorCount: 3,
     board: [
       [0, 1, 1, 1, 1, 1, 1, 1],
       [0, 0, 0, 0, 0, 3, 0, 0],
@@ -116,6 +123,7 @@ const levels = [
   {
     id: 8,
     name: 'Level 8',
+    colorCount: 3,
     board: [
       [0, 0, 0, 0, 0, 0, 0, 3],
       [4, 1, 1, 1, 1, 1, 1, 0],
@@ -132,6 +140,7 @@ const levels = [
   {
     id: 9,
     name: 'Level 9',
+    colorCount: 3,
     board: [
       [1, 1, 1, 1, 1, 1, 1, 0],
       [0, 0, 0, 0, 0, 3, 0, 3],
@@ -148,6 +157,7 @@ const levels = [
   {
     id: 10,
     name: 'Level 10',
+    colorCount: 3,
     board: [
       [1, 1, 1, 1, 1, 1, 1, 0],
       [0, 0, 0, 0, 0, 0, 0, 2],
