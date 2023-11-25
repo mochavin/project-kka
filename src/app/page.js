@@ -6,6 +6,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import toastError from './utils/toast';
 import toastWin from './utils/win';
+import { ArrowsLeftCurved } from '@heathmont/moon-icons-tw';
 
 export default function Home() {
   const [board, setBoard] = useState([
@@ -16,6 +17,7 @@ export default function Home() {
   const [isOpen, setIsOpen] = useState(false);
   const [lastStep, setLastStep] = useState([]);
   const [connectedColor, setConnectedColor] = useState(0);
+  const [trackBoard, setTrackBoard] = useState([]); // untuk undo
 
   const isNeighbor = (indexRow, indexCol, baris, type) => {
     return (
@@ -99,18 +101,20 @@ export default function Home() {
     setBoard([
       ...levels[(level + 1) % levels.length].board.map((row) => [...row]),
     ]);
+    setTrackBoard([]);
     setLastStep([]);
     setConnectedColor(0);
   };
 
   useEffect(() => {
     isWin();
-  }, [isMouseDown]);
+  }, [isMouseDown, lastStep]);
 
   const changeBoard = (indexRow, indexCol, type) => {
     const newBoard = [...board];
     newBoard[indexRow][indexCol] = type;
     setBoard(newBoard);
+    setTrackBoard([...trackBoard, [...newBoard.map((row) => [...row])]]);
   };
 
   const handleDrag = (indexRow, indexCol, baris) => {
@@ -155,10 +159,23 @@ export default function Home() {
     }
   };
 
+  const handleUndo = () => {
+    if (lastStep.length == 0) return;
+    setLastStep([...lastStep.slice(0, -1)]);
+    setTrackBoard([...trackBoard.slice(0, -1)]);
+    let lastBoard;
+    if (trackBoard.length == 1) {
+      lastBoard = [...levels[level].board.map((row) => [...row])];
+    } else {
+      lastBoard = trackBoard[trackBoard.length - 2];
+    }
+    setBoard([...lastBoard.map((row) => [...row])]);
+  };
+
   return (
     <>
       <ToastContainer />
-      <div className='flex flex-col items-center m-4 justify-center gap-4'>
+      <div className='flex flex-col items-center m-4 justify-center gap-4 fixed w-screen'>
         <div className='flex flex-col text-center'>
           <div>Level: {(level % levels.length) + 1}</div>
           <div>Banyak Langkah: {lastStep.length}</div>
@@ -201,6 +218,7 @@ export default function Home() {
                         setBoard([
                           ...levels[index].board.map((row) => [...row]),
                         ]);
+                        setTrackBoard([]);
                         setIsOpen(false);
                         setLastStep([]);
                         setConnectedColor(0);
@@ -281,10 +299,17 @@ export default function Home() {
             Connected: {connectedColor} / {levels[level].colorCount}
           </h4>
         </div>
-        <div className='flex flex-row'>
+        <div className='flex flex-row gap-4'>
+          <button
+            onClick={handleUndo}
+            className='flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-100'
+          >
+            <ArrowsLeftCurved /> Undo
+          </button>
           <button
             onClick={() => {
               setBoard([...levels[level].board.map((row) => [...row])]);
+              setTrackBoard([]);
               setLastStep([]);
               setConnectedColor(0);
             }}
