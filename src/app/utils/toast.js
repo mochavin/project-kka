@@ -1,7 +1,7 @@
-import { toast } from "react-toastify";
+import { toast } from 'react-toastify';
 
-function toastError() {
-  return toast.error('Invalid move!', {
+export function showToast(message, type) {
+  return toast[type](message, {
     position: 'top-left',
     autoClose: 1000,
     hideProgressBar: true,
@@ -12,5 +12,3 @@ function toastError() {
     theme: 'light',
   });
 }
-
-export default toastError;

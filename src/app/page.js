@@ -4,8 +4,7 @@ import { useEffect, useState } from 'react';
 import levels from './utils/levels';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import toastError from './utils/toast';
-import toastWin from './utils/win';
+import { showToast } from './utils/toast';
 import { ArrowsLeftCurved } from '@heathmont/moon-icons-tw';
 
 export default function Home() {
@@ -93,7 +92,7 @@ export default function Home() {
 
     // next level
     if (level == levels.length - 1) {
-      toastWin();
+      showToast('You Win!', 'info');
       return;
     }
 
@@ -131,7 +130,7 @@ export default function Home() {
 
     // handle red
     if (board[indexRow][indexCol] == 1) {
-      if (!isMouseDown) toastError();
+      if (!isMouseDown) showToast('Invalid move!', 'error');
       return;
     }
 
@@ -143,7 +142,7 @@ export default function Home() {
         !isNeighbor(indexRow, indexCol, baris, 3) &&
         !isNeighbor(indexRow, indexCol, baris, 4)
       ) {
-        if (!isMouseDown) toastError();
+        if (!isMouseDown) showToast('Invalid move!', 'error');
         return;
       }
 
