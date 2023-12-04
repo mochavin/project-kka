@@ -298,7 +298,7 @@ export default function Home() {
           connectedColor={connectedColor}
           level={level}
           levels={levels}
-          board={...board}
+          board={board}
         />
         <div className='flex flex-row gap-4'>
           <button
