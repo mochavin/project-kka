@@ -6,6 +6,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { showToast } from './utils/toast';
 import { ArrowsLeftCurved } from '@heathmont/moon-icons-tw';
+import ConnectedCount from './components/ConnectedCount';
 
 export default function Home() {
   const [board, setBoard] = useState([
@@ -64,7 +65,7 @@ export default function Home() {
       }
     }
 
-    // change connected color to red
+    // dark the connected color
     for (let i = 0; i < arr.length; i++) {
       if (arr[i] == 1) {
         const newBoard = [...board];
@@ -293,11 +294,12 @@ export default function Home() {
             })}
           </div>
         </div>
-        <div className='flex-row'>
-          <h4 className='font-bold'>
-            Connected: {connectedColor} / {levels[level].colorCount}
-          </h4>
-        </div>
+        <ConnectedCount
+          connectedColor={connectedColor}
+          level={level}
+          levels={levels}
+          board={...board}
+        />
         <div className='flex flex-row gap-4'>
           <button
             onClick={handleUndo}
