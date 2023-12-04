@@ -7,6 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { showToast } from './utils/toast';
 import { ArrowsLeftCurved } from '@heathmont/moon-icons-tw';
 import ConnectedCount from './components/ConnectedCount';
+import Modal from './components/Modal';
 
 export default function Home() {
   const [board, setBoard] = useState([
@@ -176,6 +177,7 @@ export default function Home() {
     <>
       <ToastContainer />
       <div className='flex flex-col items-center m-4 justify-center gap-4 fixed w-screen'>
+          {level === 0 && <Modal />}
         <div className='flex flex-col text-center'>
           <div>Level: {(level % levels.length) + 1}</div>
           <div>Banyak Langkah: {lastStep.length}</div>
@@ -237,8 +239,6 @@ export default function Home() {
         </div>
 
         <div className='flex cursor-pointer'>
-          {/* harusnya ini dinamic */}
-          {/* <div className={`grid gap-1 grid-cols-${board[0].length}`}> */}
           <div
             className={`grid grid-cols-8`}
             id='board'

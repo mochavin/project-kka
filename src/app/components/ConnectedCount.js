@@ -41,8 +41,6 @@ export default function Connected({ connectedColor, level, levels, board }) {
     }
   }
 
-  console.log(`arrColor: ${arrColor}`);
-
   return (
     <div className='flex-row'>
       <h4 className='font-bold flex gap-2'>
