@@ -92,6 +92,7 @@ export default function Home() {
             if (newBoard[j][k] == i + 2) newBoard[j][k] *= -1;
           }
         }
+        showToast('Connected!', 'success');
         setBoard(newBoard);
       }
     }
@@ -114,8 +115,12 @@ export default function Home() {
       showToast('You Win!', 'info');
       return;
     }
-
-    Router.push(`/level/${((level + 1) % levels.length) + 1}`);
+    
+    setTimeout(() => {
+      showToast('Level Up!', 'info')
+    }, 300);
+    Router.push(`/level/${((level + 1) % levels.length) + 1}`); 
+    
   };
 
   useEffect(() => {
