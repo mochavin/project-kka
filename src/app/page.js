@@ -5,9 +5,13 @@ import Modal from './components/Modal';
 
 export default function Home() {
   const Router = useRouter();
-  // useEffect(() => {
-  //   Router.push('/level/1');
-  // }, []);
+  
+  useEffect(() => {
+    setTimeout(() => {
+      Router.push('/level/1');
+    }, 5000);
+  }, []);
+  
   return <>
     <Modal />
   </>;

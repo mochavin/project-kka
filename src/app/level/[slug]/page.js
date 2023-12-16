@@ -9,8 +9,11 @@ import { ArrowsLeftCurved } from '@heathmont/moon-icons-tw';
 import ConnectedCount from '../../components/ConnectedCount';
 import Modal from '../../components/Modal';
 import { useParams, useRouter } from 'next/navigation';
+import ImagesAssets from '@/app/components/ImagesAssets';
+import { renderAsset } from '@/app/utils/function';
 
 export default function Home() {
+  let hitungAssets = [0, 0, 0];
   const params = useParams();
   const [board, setBoard] = useState([
     ...levels[params.slug - 1].board.map((row) => [...row]),
@@ -21,6 +24,7 @@ export default function Home() {
   const [lastStep, setLastStep] = useState([]);
   const [connectedColor, setConnectedColor] = useState(0);
   const [trackBoard, setTrackBoard] = useState([]); // untuk undo
+  const [renderLater, setRenderLater] = useState(false);
 
   const Router = useRouter();
 
@@ -30,6 +34,7 @@ export default function Home() {
     setTrackBoard([]);
     setLastStep([]);
     setConnectedColor(0);
+    setRenderLater(true);
   }, [params.slug]);
 
   const isNeighbor = (indexRow, indexCol, baris, type) => {
@@ -236,7 +241,14 @@ export default function Home() {
           )}
         </div>
 
-        <div className='flex cursor-pointer'>
+        <div
+          className='flex cursor-pointer'
+          style={{
+            WebkitUserSelect: 'none',
+            MsUserSelect: 'none',
+            userSelect: 'none',
+          }}
+        >
           <div
             className={`grid grid-cols-8`}
             id='board'
@@ -286,7 +298,59 @@ export default function Home() {
                       handleClick(row, col, board[row]);
                     }}
                     onTouchEnd={() => setIsMouseDown(false)}
-                  ></div>
+                  >
+                    {/* {[2, 3, 4].map((type) =>
+                      renderAsset(
+                        levels[params.slug - 1],
+                        indexRow,
+                        indexCol,
+                        type
+                      )
+                    )} */}
+
+                    {levels[params.slug - 1].board[indexRow][indexCol] == 2 &&
+                      (hitungAssets[0]++ ? (
+                        <ImagesAssets
+                          warna={0}
+                          jenis={'shop'}
+                          petak={board[indexRow][indexCol]}
+                        />
+                      ) : (
+                        <ImagesAssets
+                          warna={0}
+                          jenis={'warehouse'}
+                          petak={board[indexRow][indexCol]}
+                        />
+                      ))}
+                    {levels[params.slug - 1].board[indexRow][indexCol] == 3 &&
+                      (hitungAssets[1]++ ? (
+                        <ImagesAssets
+                          warna={1}
+                          jenis={'shop'}
+                          petak={board[indexRow][indexCol]}
+                        />
+                      ) : (
+                        <ImagesAssets
+                          warna={1}
+                          jenis={'warehouse'}
+                          petak={board[indexRow][indexCol]}
+                        />
+                      ))}
+                    {levels[params.slug - 1].board[indexRow][indexCol] == 4 &&
+                      (hitungAssets[2]++ ? (
+                        <ImagesAssets
+                          warna={2}
+                          jenis={'shop'}
+                          petak={board[indexRow][indexCol]}
+                        />
+                      ) : (
+                        <ImagesAssets
+                          warna={2}
+                          jenis={'warehouse'}
+                          petak={board[indexRow][indexCol]}
+                        />
+                      ))}
+                  </div>
                 );
               });
             })}
