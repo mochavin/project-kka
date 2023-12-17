@@ -226,7 +226,7 @@ export default function Home() {
   return (
     <>
       <ToastContainer />
-      <div className='flex flex-col items-center m-4 justify-center gap-4 fixed w-screen'>
+      <div className='flex flex-col items-center my-3 justify-center gap-4 fixed w-screen'>
         <div className='flex flex-col text-center'>
           <div>Level: {(level % levels.length) + 1}</div>
           <div>Banyak Langkah: {lastStep.length}</div>
