@@ -2,9 +2,11 @@ import heapq
 from itertools import permutations
 import copy
 from flask import Flask, request,jsonify
+from flask_cors import CORS
 import requests
 
 app=Flask(__name__)
+CORS(app)
 def heuristic_cost_estimate(current, goal):
     return abs(current[0] - goal[0]) + abs(current[1] - goal[1])
 
@@ -83,46 +85,43 @@ def get_start_end(n, graph):
 
 @app.route('/find_shortest_path', methods=['POST'])
 def find_shortest_path():
-    data = request.get_json()
-    nodes = data.get('colorCount')
-    original_graph = data.get('board')
-
-    start_node, goal_node = get_start_end(nodes, original_graph)
-    min_moves_taken = float('inf')
-    total_moves = 0
-    possible_routes = generate_permutations(nodes)
-    global solution
-    for item in possible_routes:
-        updated_graph = copy.deepcopy(original_graph)
-        solution = True
-
-        for val in item:
-            path = astar(updated_graph, start=start_node[val], goal=goal_node[val])
-
-            if path is not None:
-                block_visited(path=path, updated_graph=updated_graph)
-                moves_taken = len(path)
-                total_moves += moves_taken
-            else:
-                solution = False
-                total_moves = 0
-                break
-
-        if total_moves < min_moves_taken and total_moves != 0:
-            min_moves_taken = total_moves
-
-
     try:
-        response = requests.get('http://www.example.com')
-        if response.status_code == 200:
-            example_data = response.text
-        else:
-            example_data = None
-    except Exception as e:
-        example_data = None
+        data = request.get_json()
+        nodes = data.get('colorCount')
+        original_graph = data.get('board')
+        start_node, goal_node = get_start_end(nodes, original_graph)
+        min_moves_taken = float('inf')
+        total_moves = 0
+        possible_routes = generate_permutations(nodes)
+        global solution
+        for item in possible_routes:
+            updated_graph = copy.deepcopy(original_graph)
+            solution = True
 
-    min_moves_taken = min_moves_taken - 2 * nodes
-    return jsonify({'min_moves_taken': min_moves_taken, 'example_data': example_data})
+            for val in item:
+                path = astar(updated_graph, start=start_node[val], goal=goal_node[val])
+
+                if path is not None:
+                    block_visited(path=path, updated_graph=updated_graph)
+                    moves_taken = len(path)
+                    total_moves += moves_taken
+                else:
+                    solution = False
+                    total_moves = 0
+                    break
+            if total_moves < min_moves_taken and total_moves != 0:
+                min_moves_taken = total_moves
+        min_moves_taken = min_moves_taken - 2 * nodes
+        return jsonify({'min_moves_taken': min_moves_taken}), 200
+    except Exception as e:
+            # Handle exceptions or errors
+            error_message = str(e)
+            return jsonify({'error': error_message}), 400
+
+
+
+
+
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='localhost', port=5000)

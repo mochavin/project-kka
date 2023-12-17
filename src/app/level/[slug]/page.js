@@ -5,13 +5,13 @@ import levels from '../../utils/levels';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { showToast } from '../../utils/toast';
-import { ArrowsLeftCurved } from '@heathmont/moon-icons-tw';
+import { ArrowsLeftCurved, ControlsClose } from '@heathmont/moon-icons-tw';
 import ConnectedCount from '../../components/ConnectedCount';
 import Modal from '../../components/Modal';
 import { useParams, useRouter } from 'next/navigation';
 import ImagesAssets from '@/app/components/ImagesAssets';
 import { renderAsset } from '@/app/utils/function';
-
+import axios from 'axios';
 export default function Home() {
   let hitungAssets = [0, 0, 0];
   const params = useParams();
@@ -28,6 +28,18 @@ export default function Home() {
 
   const Router = useRouter();
 
+  async function getScore(data) {
+    try {
+      let res = await axios.post('http://127.0.0.1:5000/find_shortest_path', data);
+      
+      return res.data.min_moves_taken;
+    } catch (error) {
+      // Handle the error here
+      console.error('Error:', error);
+      throw error; // You can rethrow the error if needed
+    }
+  }
+  
   useEffect(() => {
     setLevel(params.slug - 1);
     setBoard([...levels[params.slug - 1].board.map((row) => [...row])]);
@@ -35,8 +47,27 @@ export default function Home() {
     setLastStep([]);
     setConnectedColor(0);
     setRenderLater(true);
+    let data = {
+      'colorCount': levels[params.slug - 1].colorCount,
+      'board': levels[params.slug - 1].board
+    };
+  
+    const fetchData = async () => {
+      try {
+        const score = await getScore(data);
+        // Handle the score response here
+        console.log('Score:', score);
+      } catch (error) {
+        // Handle errors that might occur during the HTTP request
+        console.error('Error fetching score:', error);
+      }
+    };
+  
+    fetchData();
   }, [params.slug]);
+  
 
+ 
   const isNeighbor = (indexRow, indexCol, baris, type) => {
     return (
       (indexCol - 1 >= 0 && baris[indexCol - 1] == type) ||
