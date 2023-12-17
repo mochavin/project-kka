@@ -3,7 +3,7 @@ from itertools import permutations
 import copy
 from flask import Flask, request,jsonify
 from flask_cors import CORS
-import requests
+
 
 app=Flask(__name__)
 CORS(app)
@@ -47,7 +47,7 @@ def neighbors(graph, node, start_val):
     row, col = node
     potential_neighbors = [(row - 1, col), (row + 1, col), (row, col - 1), (row, col + 1)]
     for item in potential_neighbors:
-        if abs(item[0]) <= rows - 1 and abs(item[1]) <= cols - 1 and int(row) - 1 >= 0 and int(col) - 1 >= 0 and (
+        if abs(item[0]) <= rows - 1 and abs(item[1]) <= cols - 1 and item[0] >= 0 and item[1] >= 0 and (
                 graph[item[0]][item[1]] == 0 or graph[item[0]][item[1]] == start_val):
             valid_neighbors.append(item)
     # print(f'valid_neigbors:{valid_neighbors}')
@@ -82,15 +82,20 @@ def get_start_end(n, graph):
     return start_node, goal_node
 
 
-
+@app.route('/', methods=['GET'])
+def hello():
+    print("HELLO")
 @app.route('/find_shortest_path', methods=['POST'])
 def find_shortest_path():
     try:
         data = request.get_json()
         nodes = data.get('colorCount')
+
         original_graph = data.get('board')
+
         start_node, goal_node = get_start_end(nodes, original_graph)
-        min_moves_taken = float('inf')
+        global min_moves_taken
+        min_moves_taken=float('inf')
         total_moves = 0
         possible_routes = generate_permutations(nodes)
         global solution
@@ -102,6 +107,7 @@ def find_shortest_path():
                 path = astar(updated_graph, start=start_node[val], goal=goal_node[val])
 
                 if path is not None:
+
                     block_visited(path=path, updated_graph=updated_graph)
                     moves_taken = len(path)
                     total_moves += moves_taken
@@ -112,16 +118,16 @@ def find_shortest_path():
             if total_moves < min_moves_taken and total_moves != 0:
                 min_moves_taken = total_moves
         min_moves_taken = min_moves_taken - 2 * nodes
+        print("Result:", {'min_moves_taken': min_moves_taken})
         return jsonify({'min_moves_taken': min_moves_taken}), 200
     except Exception as e:
-            # Handle exceptions or errors
-            error_message = str(e)
-            return jsonify({'error': error_message}), 400
+        # Handle exceptions or errors
+        error_message = str(e)
+        print("Error:", error_message)
+        return jsonify({'error': error_message}), 400
 
 
 
 
 
 
-if __name__ == '__main__':
-    app.run(host='localhost', port=5000)

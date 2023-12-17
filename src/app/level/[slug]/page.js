@@ -30,13 +30,13 @@ export default function Home() {
 
   async function getScore(data) {
     try {
-      let res = await axios.post('http://127.0.0.1:5000/find_shortest_path', data);
+      let res = await axios.post('http://rororyo.pythonanywhere.com/find_shortest_path', data);
       
       return res.data.min_moves_taken;
     } catch (error) {
-      // Handle the error here
+
       console.error('Error:', error);
-      throw error; // You can rethrow the error if needed
+      throw error; 
     }
   }
   
