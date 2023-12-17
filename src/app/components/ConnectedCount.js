@@ -1,5 +1,5 @@
 export default function Connected({ connectedColor, level, levels, board }) {
-  const arr = ['white', 'red', 'green', 'blue', 'orange', 'orange', 'purple'];
+  const arr = ['white', 'red', 'green', 'blue', 'orange', 'purple', 'gray'];
   // declare set of color
 
   const arrColor = [0, 0, 0];
@@ -13,7 +13,7 @@ export default function Connected({ connectedColor, level, levels, board }) {
 
   for (let i = 0; i < board.length; i++) {
     for (let j = 0; j < board[i].length; j++) {
-      if (board[i][j] == 2 || board[i][j] == 3 || board[i][j] == 4) {
+      if (board[i][j] == 2 || board[i][j] == 3 || board[i][j] == 4|| board[i][j] == 5 || board[i][j] == 6) {
         if (!visited[i][j]) {
           queue.push([i, j]);
           visited[i][j] = true;
@@ -53,7 +53,7 @@ export default function Connected({ connectedColor, level, levels, board }) {
             }`}
           >
             <span
-              className={`flex w-4 h-4 rounded-full`}
+              className={`flex w-4 h-4 rounded-full border-2 border-white`}
               style={{ backgroundColor: arr[index + 2] }}
             ></span>
             <span className='ml-1 text-center'>{color == 2? '1' : '0'}</span>

@@ -70,4 +70,51 @@ export default function ImagesAssets({ warna, jenis, petak }) {
       );
     }
   }
+  if (warna == 3) {
+    if (jenis == 'shop')
+      return (
+        <Image
+          src={`/assets/purple-shop.png`}
+          alt='purple-shop'
+          width={32}
+          height={32}
+          className={petak != -5? 'animate-pulse' : undefined}
+        />
+      );
+    else {
+      return (
+        <Image
+          src={`/assets/purple-warehouse.png`}
+          alt='purple-warehouse'
+          width={32}
+          height={32}
+          className={petak != -5? 'animate-pulse' : undefined}
+        />
+      );
+    }
+  }
+  if (warna == 4) {
+    if (jenis == 'shop')
+      return (
+        <Image
+          src={`/assets/gray-shop.png`}
+          alt='black-shop'
+          width={32}
+          height={32}
+          className={petak != -6? 'animate-pulse' : undefined}
+        />
+      );
+    else {
+      return (
+        <Image
+          src={`/assets/gray-warehouse.png`}
+          alt='black-warehouse'
+          width={32}
+          height={32}
+          className={petak != -6? 'animate-pulse' : undefined}
+        />
+      );
+    }
+  }
+  
 }

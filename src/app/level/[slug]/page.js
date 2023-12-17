@@ -25,6 +25,7 @@ export default function Home() {
   const [connectedColor, setConnectedColor] = useState(0);
   const [trackBoard, setTrackBoard] = useState([]); // untuk undo
   const [renderLater, setRenderLater] = useState(false);
+  
 
   const Router = useRouter();
 
@@ -78,7 +79,7 @@ export default function Home() {
   };
 
   const isWin = () => {
-    const arr = [0, 0, 0];
+    const arr = [0, 0, 0, 0, 0];
     const visited = [...board.map((row) => [...row].fill(false))];
     const queue = [];
     const dx = [0, 0, 1, -1];
@@ -86,7 +87,7 @@ export default function Home() {
 
     for (let i = 0; i < board.length; i++) {
       for (let j = 0; j < board[i].length; j++) {
-        if (board[i][j] == 2 || board[i][j] == 3 || board[i][j] == 4) {
+        if (board[i][j] == 2 || board[i][j] == 3 || board[i][j] == 4 || board[i][j] == 5|| board[i][j] == 6) {
           if (!visited[i][j]) {
             queue.push([i, j]);
             visited[i][j] = true;
@@ -136,7 +137,7 @@ export default function Home() {
     setConnectedColor(count);
 
     // check if win
-    if (!(arr[0] <= 1 && arr[1] <= 1 && arr[2] <= 1)) {
+    if (!(arr[0] <= 1 && arr[1] <= 1 && arr[2] <= 1 && arr[3] <= 1 &&arr[4] <= 1)) {
       // banyak warna yang terhubung harus dari ketiga warna <= 1
       return;
     }
@@ -189,13 +190,15 @@ export default function Home() {
       if (
         !isNeighbor(indexRow, indexCol, baris, 2) &&
         !isNeighbor(indexRow, indexCol, baris, 3) &&
-        !isNeighbor(indexRow, indexCol, baris, 4)
+        !isNeighbor(indexRow, indexCol, baris, 4) &&
+        !isNeighbor(indexRow, indexCol, baris, 5) &&
+        !isNeighbor(indexRow, indexCol, baris, 6)
       ) {
         if (!isMouseDown) showToast('Invalid move!', 'error');
         return;
       }
 
-      for (let type = 2; type <= 4; type++) {
+      for (let type = 2; type <= 6; type++) {
         if (isNeighbor(indexRow, indexCol, baris, type)) {
           changeBoard(indexRow, indexCol, type);
           setLastStep([...lastStep, { indexRow, indexCol, type }]);
@@ -300,13 +303,17 @@ export default function Home() {
                 ${item == 2 && 'bg-green-500'} 
                 ${item == 3 && 'bg-blue-500'}
                 ${item == 4 && 'bg-yellow-500'}
+                ${item == 5 && 'bg-purple-500'}
+                ${item == 6 && 'bg-gray-500'}
                 ${item == -2 && 'bg-green-700 cursor-default'}
                 ${item == -3 && 'bg-blue-700 cursor-default'}
                 ${item == -4 && 'bg-yellow-700 cursor-default'}
+                ${item == -5 && 'bg-purple-700 cursor-default'}
+                ${item == -6 && 'bg-gray-700 cursor-default'}
                 ${
                   indexCol == lastStep[lastStep.length - 1]?.indexCol &&
                   indexRow == lastStep[lastStep.length - 1]?.indexRow &&
-                  (item == 2 || item == 3 || item == 4) &&
+                  (item == 2 || item == 3 || item == 4||item==5||item==6) &&
                   'animate-pulse'
                 }
                 `}
@@ -382,6 +389,34 @@ export default function Home() {
                       ) : (
                         <ImagesAssets
                           warna={2}
+                          jenis={'warehouse'}
+                          petak={board[indexRow][indexCol]}
+                        />
+                      ))}
+                      {levels[params.slug - 1].board[indexRow][indexCol] == 5 &&
+                      (hitungAssets[3]++ ? (
+                        <ImagesAssets
+                          warna={3}
+                          jenis={'shop'}
+                          petak={board[indexRow][indexCol]}
+                        />
+                      ) : (
+                        <ImagesAssets
+                          warna={3}
+                          jenis={'warehouse'}
+                          petak={board[indexRow][indexCol]}
+                        />
+                      ))}
+                      {levels[params.slug - 1].board[indexRow][indexCol] == 6 &&
+                      (hitungAssets[4]++ ? (
+                        <ImagesAssets
+                          warna={4}
+                          jenis={'shop'}
+                          petak={board[indexRow][indexCol]}
+                        />
+                      ) : (
+                        <ImagesAssets
+                          warna={4}
                           jenis={'warehouse'}
                           petak={board[indexRow][indexCol]}
                         />
