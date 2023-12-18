@@ -13,7 +13,7 @@ import ImagesAssets from '@/app/components/ImagesAssets';
 import { renderAsset } from '@/app/utils/function';
 import axios from 'axios';
 export default function Home() {
-  let hitungAssets = [0, 0, 0];
+  let hitungAssets = [0, 0, 0, 0,0];
   const params = useParams();
   const [board, setBoard] = useState([
     ...levels[params.slug - 1].board.map((row) => [...row]),
@@ -25,6 +25,7 @@ export default function Home() {
   const [connectedColor, setConnectedColor] = useState(0);
   const [trackBoard, setTrackBoard] = useState([]); // untuk undo
   const [renderLater, setRenderLater] = useState(false);
+  const [score,setScore]=useState()
   
 
   const Router = useRouter();
@@ -33,7 +34,7 @@ export default function Home() {
     try {
       let res = await axios.post('http://rororyo.pythonanywhere.com/find_shortest_path', data);
       
-      return res.data.min_moves_taken;
+      setScore(res.data.min_moves_taken) 
     } catch (error) {
 
       console.error('Error:', error);
@@ -53,18 +54,7 @@ export default function Home() {
       'board': levels[params.slug - 1].board
     };
   
-    const fetchData = async () => {
-      try {
-        const score = await getScore(data);
-        // Handle the score response here
-        console.log('Score:', score);
-      } catch (error) {
-        // Handle errors that might occur during the HTTP request
-        console.error('Error fetching score:', error);
-      }
-    };
-  
-    fetchData();
+getScore(data)
   }, [params.slug]);
   
 
@@ -138,20 +128,24 @@ export default function Home() {
 
     // check if win
     if (!(arr[0] <= 1 && arr[1] <= 1 && arr[2] <= 1 && arr[3] <= 1 &&arr[4] <= 1)) {
-      // banyak warna yang terhubung harus dari ketiga warna <= 1
+     
       return;
     }
 
     // next level
     if (level == levels.length - 1) {
+      showToast('Score:'+Math.ceil((score/lastStep.length))*100+'/100','info')
       showToast('You Win!', 'info');
       return;
     }
     
     setTimeout(() => {
-      showToast('Level Up!', 'info')
-    }, 300);
+    showToast('Score:'+Math.ceil((score/lastStep.length))*100+'/100','info')
+  }, 2000);
+    setTimeout(() => {
+    showToast('Level Up!', 'info')
     Router.push(`/level/${((level + 1) % levels.length) + 1}`); 
+  }, 4000);
     
   };
 
