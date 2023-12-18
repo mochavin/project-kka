@@ -134,13 +134,13 @@ getScore(data)
 
     // next level
     if (level == levels.length - 1) {
-      showToast('Score:'+Math.ceil((score/lastStep.length))*100+'/100','info')
+      showToast('Score:'+Math.round((score/lastStep.length)*100)+'/100','info')
       showToast('You Win!', 'info');
       return;
     }
     
     setTimeout(() => {
-    showToast('Score:'+Math.ceil((score/lastStep.length))*100+'/100','info')
+    showToast('Score:'+Math.round((score/lastStep.length)*100)+'/100','info')
   }, 2000);
     setTimeout(() => {
     showToast('Level Up!', 'info')
@@ -445,6 +445,7 @@ getScore(data)
           >
             Restart
           </button>
+          
         </div>
       </div>
     </>
