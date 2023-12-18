@@ -1,5 +1,9 @@
 import Image from 'next/image';
-
+// 0: green shop and warehouse
+// 1: blue shop and warehouse
+// 2: yellow shop and warehouse
+// 3: purple shop and warehouse
+// 4: gray shop and warehouse
 export default function ImagesAssets({ warna, jenis, petak }) {
   if (warna == 0) {
     if (jenis == 'shop')

@@ -7,9 +7,17 @@ from flask_cors import CORS
 
 app=Flask(__name__)
 CORS(app)
+#Calculate heuristic cost
 def heuristic_cost_estimate(current, goal):
     return abs(current[0] - goal[0]) + abs(current[1] - goal[1])
 
+#A* algorithm implementation
+    # Args:
+    #     graph (list): The graph representation.
+    #     start (tuple): The starting node coordinates.
+    #     goal (tuple): The goal node coordinates.
+    # Returns:
+    #     list or None: The path from the start node to the goal node if it exists, None otherwise.
 def astar(graph, start, goal):
     start_val = graph[start[0]][start[1]]
     open_set = [(0, start)]
@@ -39,7 +47,7 @@ def astar(graph, start, goal):
                 came_from[neighbor] = current_node
 
     return None
-
+#get neighbors to traverse 
 def neighbors(graph, node, start_val):
     valid_neighbors = []
     rows = len(graph)
@@ -47,22 +55,25 @@ def neighbors(graph, node, start_val):
     row, col = node
     potential_neighbors = [(row - 1, col), (row + 1, col), (row, col - 1), (row, col + 1)]
     for item in potential_neighbors:
+        #valid neighbors if not out of bounds and not visited or the node of start/end
         if abs(item[0]) <= rows - 1 and abs(item[1]) <= cols - 1 and item[0] >= 0 and item[1] >= 0 and (
                 graph[item[0]][item[1]] == 0 or graph[item[0]][item[1]] == start_val):
             valid_neighbors.append(item)
     # print(f'valid_neigbors:{valid_neighbors}')
     return valid_neighbors
 
+#turns all the items in the path to 1 (visited/wall)
 def block_visited(path, updated_graph):
     for item in path:
         if updated_graph[item[0]][item[1]] == 0:
             updated_graph[item[0]][item[1]] = 1
 
+#generating permutations to make sure all possible routes are tried
 def generate_permutations(n):
     numbers = list(range(n))
     result = list(permutations(numbers))
     return result
-
+#get the index of start node and end node
 def get_start_end(n, graph):
     start_node = []
     goal_node = []
@@ -81,13 +92,16 @@ def get_start_end(n, graph):
         temp += 1
     return start_node, goal_node
 
-
+#testing if my api works
 @app.route('/', methods=['GET'])
 def hello():
     print("HELLO")
+
+#gettting data and processing
 @app.route('/find_shortest_path', methods=['POST'])
 def find_shortest_path():
     try:
+        #get neccesary datas
         data = request.get_json()
         nodes = data.get('colorCount')
 
@@ -99,7 +113,9 @@ def find_shortest_path():
         total_moves = 0
         possible_routes = generate_permutations(nodes)
         global solution
+       #traversing all possible routes from the permutation 
         for item in possible_routes:
+            
             updated_graph = copy.deepcopy(original_graph)
             solution = True
 

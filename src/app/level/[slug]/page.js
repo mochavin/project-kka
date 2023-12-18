@@ -26,10 +26,18 @@ export default function Home() {
   const [trackBoard, setTrackBoard] = useState([]); // untuk undo
   const [renderLater, setRenderLater] = useState(false);
   const [score,setScore]=useState()
-  
-
   const Router = useRouter();
+// 0 : white tile (path)
+// 1 : red tile (obstacle)
+// 2-6: shop and warehouse nodes
+// 2 : green tile
+// 3 : blue tile
+// 4 : yellow tile
+// 5 : purple tile
+// 6 : gray tile
 
+
+// get the data from the python api using axios
   async function getScore(data) {
     try {
       let res = await axios.post('http://rororyo.pythonanywhere.com/find_shortest_path', data);
@@ -41,7 +49,7 @@ export default function Home() {
       throw error; 
     }
   }
-  
+  //changes when entering new level
   useEffect(() => {
     setLevel(params.slug - 1);
     setBoard([...levels[params.slug - 1].board.map((row) => [...row])]);
@@ -59,6 +67,7 @@ getScore(data)
   
 
  
+  //check if the clicked nodes have neighbor that's already colored
   const isNeighbor = (indexRow, indexCol, baris, type) => {
     return (
       (indexCol - 1 >= 0 && baris[indexCol - 1] == type) ||
@@ -69,6 +78,7 @@ getScore(data)
   };
 
   const isWin = () => {
+    //5 elements because 5 color
     const arr = [0, 0, 0, 0, 0];
     const visited = [...board.map((row) => [...row].fill(false))];
     const queue = [];
@@ -138,7 +148,7 @@ getScore(data)
       showToast('You Win!', 'info');
       return;
     }
-    
+    //Display score
     setTimeout(() => {
     showToast('Score:'+Math.round((score/lastStep.length)*100)+'/100','info')
   }, 2000);
@@ -152,7 +162,7 @@ getScore(data)
   useEffect(() => {
     isWin();
   }, [lastStep]);
-
+//function to change the board
   const changeBoard = (indexRow, indexCol, type) => {
     const newBoard = [...board];
     newBoard[indexRow][indexCol] = type;
@@ -204,6 +214,7 @@ getScore(data)
     }
   };
 
+  //undo
   const handleUndo = () => {
     if (lastStep.length == 0) return;
     setLastStep([...lastStep.slice(0, -1)]);
@@ -216,7 +227,7 @@ getScore(data)
     }
     setBoard([...lastBoard.map((row) => [...row])]);
   };
-
+//render page
   return (
     <>
       <ToastContainer />
@@ -287,11 +298,13 @@ getScore(data)
             id='board'
             onMouseLeave={() => setIsMouseDown(false)}
           >
+
             {board.map((baris, indexRow) => {
               return baris.map((item, indexCol) => {
                 return (
                   <div
                     className={`w-8 h-8 border-[1px] border-black
+                     
                 ${item == 0 && 'bg-white'} 
                 ${item == 1 && 'bg-red-500'} 
                 ${item == 2 && 'bg-green-500'} 
