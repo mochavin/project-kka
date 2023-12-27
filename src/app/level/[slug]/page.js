@@ -13,40 +13,42 @@ import ImagesAssets from '@/app/components/ImagesAssets';
 import { renderAsset } from '@/app/utils/function';
 import axios from 'axios';
 export default function Home() {
-  let hitungAssets = [0, 0, 0, 0,0];
+  let hitungAssets = [0, 0, 0, 0, 0];
   const params = useParams();
   const [board, setBoard] = useState([
     ...levels[params.slug - 1].board.map((row) => [...row]),
   ]);
   const [level, setLevel] = useState(params.slug - 1);
   const [isMouseDown, setIsMouseDown] = useState(false);
+  const [lastClick, setLastClick] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const [lastStep, setLastStep] = useState([]);
   const [connectedColor, setConnectedColor] = useState(0);
   const [trackBoard, setTrackBoard] = useState([]); // untuk undo
   const [renderLater, setRenderLater] = useState(false);
-  const [score,setScore]=useState()
+  const [score, setScore] = useState();
   const Router = useRouter();
-// 0 : white tile (path)
-// 1 : red tile (obstacle)
-// 2-6: shop and warehouse nodes
-// 2 : green tile
-// 3 : blue tile
-// 4 : yellow tile
-// 5 : purple tile
-// 6 : gray tile
+  // 0 : white tile (path)
+  // 1 : red tile (obstacle)
+  // 2-6: shop and warehouse nodes
+  // 2 : green tile
+  // 3 : blue tile
+  // 4 : yellow tile
+  // 5 : purple tile
+  // 6 : gray tile
 
-
-// get the data from the python api using axios
+  // get the data from the python api using axios
   async function getScore(data) {
     try {
-      let res = await axios.post('http://rororyo.pythonanywhere.com/find_shortest_path', data);
-      
-      setScore(res.data.min_moves_taken) 
-    } catch (error) {
+      let res = await axios.post(
+        'http://rororyo.pythonanywhere.com/find_shortest_path',
+        data
+      );
 
+      setScore(res.data.min_moves_taken);
+    } catch (error) {
       console.error('Error:', error);
-      throw error; 
+      throw error;
     }
   }
   //changes when entering new level
@@ -58,15 +60,13 @@ export default function Home() {
     setConnectedColor(0);
     setRenderLater(true);
     let data = {
-      'colorCount': levels[params.slug - 1].colorCount,
-      'board': levels[params.slug - 1].board
+      colorCount: levels[params.slug - 1].colorCount,
+      board: levels[params.slug - 1].board,
     };
-  
-getScore(data)
-  }, [params.slug]);
-  
 
- 
+    getScore(data);
+  }, [params.slug]);
+
   //check if the clicked nodes have neighbor that's already colored
   const isNeighbor = (indexRow, indexCol, baris, type) => {
     return (
@@ -87,7 +87,13 @@ getScore(data)
 
     for (let i = 0; i < board.length; i++) {
       for (let j = 0; j < board[i].length; j++) {
-        if (board[i][j] == 2 || board[i][j] == 3 || board[i][j] == 4 || board[i][j] == 5|| board[i][j] == 6) {
+        if (
+          board[i][j] == 2 ||
+          board[i][j] == 3 ||
+          board[i][j] == 4 ||
+          board[i][j] == 5 ||
+          board[i][j] == 6
+        ) {
           if (!visited[i][j]) {
             queue.push([i, j]);
             visited[i][j] = true;
@@ -137,32 +143,38 @@ getScore(data)
     setConnectedColor(count);
 
     // check if win
-    if (!(arr[0] <= 1 && arr[1] <= 1 && arr[2] <= 1 && arr[3] <= 1 &&arr[4] <= 1)) {
-     
+    if (
+      !(arr[0] <= 1 && arr[1] <= 1 && arr[2] <= 1 && arr[3] <= 1 && arr[4] <= 1)
+    ) {
       return;
     }
 
     // next level
     if (level == levels.length - 1) {
-      showToast('Score:'+Math.round((score/lastStep.length)*100)+'/100','info')
+      showToast(
+        'Score:' + Math.round((score / lastStep.length) * 100) + '/100',
+        'info'
+      );
       showToast('You Win!', 'info');
       return;
     }
     //Display score
     setTimeout(() => {
-    showToast('Score:'+Math.round((score/lastStep.length)*100)+'/100','info')
-  }, 2000);
+      showToast(
+        'Score:' + Math.round((score / lastStep.length) * 100) + '/100',
+        'info'
+      );
+    }, 2000);
     setTimeout(() => {
-    showToast('Level Up!', 'info')
-    Router.push(`/level/${((level + 1) % levels.length) + 1}`); 
-  }, 4000);
-    
+      showToast('Level Up!', 'info');
+      Router.push(`/level/${((level + 1) % levels.length) + 1}`);
+    }, 4000);
   };
 
   useEffect(() => {
     isWin();
   }, [lastStep]);
-//function to change the board
+  //function to change the board
   const changeBoard = (indexRow, indexCol, type) => {
     const newBoard = [...board];
     newBoard[indexRow][indexCol] = type;
@@ -176,6 +188,8 @@ getScore(data)
 
   const handleClick = (indexRow, indexCol, baris) => {
     setIsMouseDown(true);
+    // set last board clicked
+    setLastClick(board[indexRow][indexCol]);
 
     // handle out of bound
     if (indexRow < 0 || indexRow >= board.length) {
@@ -203,9 +217,13 @@ getScore(data)
       }
 
       for (let type = 2; type <= 6; type++) {
-        if (isNeighbor(indexRow, indexCol, baris, type)) {
+        if (
+          isNeighbor(indexRow, indexCol, baris, type) &&
+          (lastClick == type || lastClick == 0)
+        ) {
           changeBoard(indexRow, indexCol, type);
           setLastStep([...lastStep, { indexRow, indexCol, type }]);
+          setLastClick(type);
           return true;
         }
       }
@@ -227,7 +245,7 @@ getScore(data)
     }
     setBoard([...lastBoard.map((row) => [...row])]);
   };
-//render page
+  //render page
   return (
     <>
       <ToastContainer />
@@ -298,13 +316,11 @@ getScore(data)
             id='board'
             onMouseLeave={() => setIsMouseDown(false)}
           >
-
             {board.map((baris, indexRow) => {
               return baris.map((item, indexCol) => {
                 return (
                   <div
                     className={`w-8 h-8 border-[1px] border-black
-                     
                 ${item == 0 && 'bg-white'} 
                 ${item == 1 && 'bg-red-500'} 
                 ${item == 2 && 'bg-green-500'} 
@@ -320,7 +336,11 @@ getScore(data)
                 ${
                   indexCol == lastStep[lastStep.length - 1]?.indexCol &&
                   indexRow == lastStep[lastStep.length - 1]?.indexRow &&
-                  (item == 2 || item == 3 || item == 4||item==5||item==6) &&
+                  (item == 2 ||
+                    item == 3 ||
+                    item == 4 ||
+                    item == 5 ||
+                    item == 6) &&
                   'animate-pulse'
                 }
                 `}
@@ -400,7 +420,7 @@ getScore(data)
                           petak={board[indexRow][indexCol]}
                         />
                       ))}
-                      {levels[params.slug - 1].board[indexRow][indexCol] == 5 &&
+                    {levels[params.slug - 1].board[indexRow][indexCol] == 5 &&
                       (hitungAssets[3]++ ? (
                         <ImagesAssets
                           warna={3}
@@ -414,7 +434,7 @@ getScore(data)
                           petak={board[indexRow][indexCol]}
                         />
                       ))}
-                      {levels[params.slug - 1].board[indexRow][indexCol] == 6 &&
+                    {levels[params.slug - 1].board[indexRow][indexCol] == 6 &&
                       (hitungAssets[4]++ ? (
                         <ImagesAssets
                           warna={4}
@@ -458,7 +478,6 @@ getScore(data)
           >
             Restart
           </button>
-          
         </div>
       </div>
     </>
